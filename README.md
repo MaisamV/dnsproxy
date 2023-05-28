@@ -96,9 +96,9 @@ The same proxy with verbose logging enabled writing it to the file `log.txt`.
 ./dnsproxy -u 8.8.8.8:53 -v -o log.txt
 ```
 
-Runs a DNS proxy on `127.0.0.1:5353` with multiple upstreams.
+Runs a DNS proxy on `127.0.0.1:53` with multiple upstreams.
 ```shell
-./dnsproxy -l 127.0.0.1 -p 5353 -u 8.8.8.8:53 -u 1.1.1.1:53
+./dnsproxy -l 127.0.0.1  -p 53 -u tls://cloudflare-dns.com -u tls://dns.google -u 8.8.8.8:53 -u 1.1.1.1:53
 ```
 
 Listen on multiple interfaces and ports:
