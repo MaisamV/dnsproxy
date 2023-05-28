@@ -33,11 +33,6 @@ func (p *Proxy) startListeners() error {
 		return err
 	}
 
-	err = p.createQUICListeners()
-	if err != nil {
-		return err
-	}
-
 	err = p.createDNSCryptListeners()
 	if err != nil {
 		return err
@@ -57,10 +52,6 @@ func (p *Proxy) startListeners() error {
 
 	for i := range p.httpsServer {
 		go p.listenHTTPS(p.httpsServer[i], p.httpsListen[i])
-	}
-
-	for _, l := range p.quicListen {
-		go p.quicPacketLoop(l, p.requestGoroutinesSema)
 	}
 
 	for _, l := range p.dnsCryptUDPListen {

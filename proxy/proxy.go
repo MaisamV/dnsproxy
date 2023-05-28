@@ -16,7 +16,6 @@ import (
 	"github.com/AdguardTeam/golibs/log"
 	"github.com/ameshkov/dnscrypt/v2"
 	"github.com/joomcode/errorx"
-	"github.com/lucas-clemente/quic-go"
 	"github.com/miekg/dns"
 	gocache "github.com/patrickmn/go-cache"
 	"golang.org/x/net/http2"
@@ -71,7 +70,6 @@ type Proxy struct {
 	udpListen         []*net.UDPConn   // UDP listen connections
 	tcpListen         []net.Listener   // TCP listeners
 	tlsListen         []net.Listener   // TLS listeners
-	quicListen        []quic.Listener  // QUIC listeners
 	httpsListen       []net.Listener   // HTTPS listeners
 	httpsServer       []*http.Server   // HTTPS server instance
 	dnsCryptUDPListen []*net.UDPConn   // UDP listen connections for DNSCrypt
@@ -265,14 +263,6 @@ func (p *Proxy) Stop() error {
 	p.httpsListen = nil
 	p.httpsServer = nil
 
-	for _, l := range p.quicListen {
-		err := l.Close()
-		if err != nil {
-			errs = append(errs, errorx.Decorate(err, "couldn't close QUIC listener"))
-		}
-	}
-	p.quicListen = nil
-
 	for _, l := range p.dnsCryptUDPListen {
 		err := l.Close()
 		if err != nil {
@@ -327,9 +317,6 @@ func (p *Proxy) Addrs(proto Proto) []net.Addr {
 		}
 
 	case ProtoQUIC:
-		for _, l := range p.quicListen {
-			addrs = append(addrs, l.Addr())
-		}
 
 	case ProtoDNSCrypt:
 		// Using only UDP addrs here
@@ -376,12 +363,6 @@ func (p *Proxy) Addr(proto Proto) net.Addr {
 			return nil
 		}
 		return p.udpListen[0].LocalAddr()
-
-	case ProtoQUIC:
-		if len(p.quicListen) == 0 {
-			return nil
-		}
-		return p.quicListen[0].Addr()
 
 	case ProtoDNSCrypt:
 		if len(p.dnsCryptUDPListen) == 0 {

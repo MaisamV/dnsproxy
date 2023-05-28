@@ -8,7 +8,6 @@ import (
 	"github.com/AdguardTeam/dnsproxy/proxyutil"
 	"github.com/AdguardTeam/dnsproxy/upstream"
 	"github.com/ameshkov/dnscrypt/v2"
-	"github.com/lucas-clemente/quic-go"
 	"github.com/miekg/dns"
 )
 
@@ -40,14 +39,6 @@ type DNSContext struct {
 
 	// DNSCryptResponseWriter - necessary to respond to a DNSCrypt query
 	DNSCryptResponseWriter dnscrypt.ResponseWriter
-
-	// QUICStream is the QUIC stream from which we got the query.  For
-	// ProtoQUIC only.
-	QUICStream quic.Stream
-
-	// QUICSession is the QUIC session from which we got the query.  For
-	// ProtoQUIC only.
-	QUICSession quic.Session
 
 	// RequestID is an opaque numerical identifier of this request that is
 	// guaranteed to be unique across requests processed by a single Proxy
